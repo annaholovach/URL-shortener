@@ -7,7 +7,7 @@ class UrlController {
             const url = await urlService.createUrl(longUrl)
             return res.status(200).json(url)
         } catch(e) {
-            return res.status(400).json(e.message)
+            return res.status(500).json(e.message)
         }
     }
 
