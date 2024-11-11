@@ -16,9 +16,9 @@ app.use('/', router)
 
 const start = async() => {
     try {
-        // await sequelize.authenticate();
-        // await sequelize.sync()
-        // console.log('Connection has been established successfully.');
+        await sequelize.authenticate();
+        await sequelize.sync()
+        console.log('Connection has been established successfully.');
         app.listen(PORT, () => console.log(`started on ${PORT} port`))
     }catch(e){
         console.log(e)
