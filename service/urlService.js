@@ -3,12 +3,14 @@ const shortId = require('shortid')
 const validUrl = require('valid-url')
 const {isUrlValid} = require('../utils/urlValidator')
 const {SET_ASYNC, GET_ASYNC} = require('../caching/cache')
+const logger = require('../logger/logger')
 
 class UrlService {
     async createUrl (longUrl) {
         if (!longUrl || !isUrlValid(longUrl) || !validUrl.isUri(longUrl)) {
             throw new Error('enter a valid url')
         }
+        logger.info(`Creating URL for: ${longUrl}`)
 
         const cachedShortUrl = await GET_ASYNC(longUrl);
         if (cachedShortUrl) {
@@ -34,6 +36,7 @@ class UrlService {
     }
 
     async getUrl (urlCode) {
+        logger.info(`Fetching URL for code: ${urlCode}`)
         const cachedLongUrl = await GET_ASYNC(urlCode);
         if (cachedLongUrl) {
             return cachedLongUrl;

@@ -4,6 +4,7 @@ const sequelize = require('./db')
 const cors = require('cors')
 const router = require('./routes/index')
 const { swaggerSpec, swaggerUi } = require('./swagger');
+const logger = require('./logger/logger');
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -11,6 +12,19 @@ const PORT = process.env.PORT || 5000
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(cors())
 app.use(express.json())
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        logger.info(`Request handled`, {
+            method: req.method,
+            url: req.originalUrl,
+            status: res.statusCode,
+            duration: `${duration}ms`,
+        });
+    });
+    next();
+});
 app.use('/', router)
 
 
@@ -19,7 +33,8 @@ const start = async() => {
         await sequelize.authenticate();
         await sequelize.sync()
         console.log('Connection has been established successfully.');
-        app.listen(PORT, () => console.log(`started on ${PORT} port`))
+        logger.info('Connection has been established successfully.')
+        app.listen(PORT, () => logger.info(`Application started on ${PORT}`))
     }catch(e){
         console.log(e)
     }
