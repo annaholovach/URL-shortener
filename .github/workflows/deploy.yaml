@@ -1,0 +1,91 @@
+name: CI prod build
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  checkout_code:
+    name: Checkout Code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Replace placeholders in .env file
+      run: |
+        sed -i 's|{{DB_HOST}}|${{ secrets.DB_HOST }}|g' .env
+        sed -i 's|{{DB_USER}}|${{ secrets.DB_USER }}|g' .env
+        sed -i 's|{{DB_PASSWORD}}|${{ secrets.DB_PASSWORD }}|g' .env
+        sed -i 's|{{BASE_URL}}|${{ secrets.BASE_URL }}|g' .env
+
+  deploy_docker:
+    name: Deploy to Docker on EC2
+    runs-on: ubuntu-latest
+    needs: checkout_code  
+
+    steps:
+    - name: Build Docker image
+      run: docker build -t test:latest .
+
+    - name: Save Docker image
+      run: docker save test:latest | gzip > test.tar.gz
+
+    - name: Copy Docker image to EC2
+      uses: appleboy/scp-action@v0.2.1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "test.tar.gz"
+        target: "~/test.tar.gz"
+
+    - name: Copy .env file to EC2
+      uses: appleboy/scp-action@v0.2.1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: ".env"
+        target: "~/app/.env"
+
+    - name: Deploy Docker image on EC2
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          docker stop test || true
+          docker rm test || true
+          docker load < ~/test.tar.gz
+          docker run -d \
+            --name test \
+            --env-file ~/app/.env \
+            -p 5000:5000 \
+            test:latest
+
+  verify_deploy:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    needs: deploy_docker 
+
+    steps:
+    - name: Verify Deployment
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
+          if [ "$STATUS" -eq 200 ]; then
+            echo "Deployment successful"
+          else
+            echo "Deployment failed"
+            exit 1
+          fi
+
