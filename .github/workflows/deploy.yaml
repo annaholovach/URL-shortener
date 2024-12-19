@@ -15,6 +15,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Upload code as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: repository-files
+        path: . 
+
     - name: Replace placeholders in .env file
       run: |
         sed -i 's|{{DB_HOST}}|${{ secrets.DB_HOST }}|g' .env
@@ -24,12 +30,6 @@ jobs:
 
     - name: List files in the repository
       run: ls -R
-
-    - name: Upload code as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: repository-files
-        path: . 
 
   deploy_docker:
     name: Deploy to Docker on EC2
@@ -41,7 +41,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: repository-files
-        
+
     - name: List repository files
       run: ls -R
 
