@@ -21,12 +21,18 @@ jobs:
     - name: Check file permissions
       run: ls -l .env
 
+    - name: Check .env
+      run: cat .env
+
     - name: Replace placeholders in .env file
       run: |
         sed -i 's|{{DB_HOST}}|${{ secrets.DB_HOST }}|g' .env
         sed -i 's|{{DB_USER}}|${{ secrets.DB_USER }}|g' .env
         sed -i 's|{{DB_PASSWORD}}|${{ secrets.DB_PASSWORD }}|g' .env
         sed -i 's|{{BASE_URL}}|${{ secrets.BASE_URL }}|g' .env
+
+    - name: Check .env
+      run: cat .env
 
     - name: Upload code as artifact
       uses: actions/upload-artifact@v3
