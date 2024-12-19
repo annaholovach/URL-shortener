@@ -15,11 +15,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Upload code as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: repository-files
-        path: . 
+    - name: Check if .env exists
+      run: ls -l .env
+
+    - name: Check file permissions
+      run: ls -l .env
 
     - name: Replace placeholders in .env file
       run: |
@@ -27,6 +27,12 @@ jobs:
         sed -i 's|{{DB_USER}}|${{ secrets.DB_USER }}|g' .env
         sed -i 's|{{DB_PASSWORD}}|${{ secrets.DB_PASSWORD }}|g' .env
         sed -i 's|{{BASE_URL}}|${{ secrets.BASE_URL }}|g' .env
+
+    - name: Upload code as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: repository-files
+        path: . 
 
     - name: List files in the repository
       run: ls -R
