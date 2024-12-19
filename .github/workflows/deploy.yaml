@@ -31,11 +31,11 @@ jobs:
     needs: checkout_code  
 
     steps:
-    - name: Build Docker image
-      run: docker build -t test:latest -f ./Dockerfile .
-
     - name: Check file permissions
       run: ls -l Dockerfile
+      
+    - name: Build Docker image
+      run: docker build -t test:latest -f ./Dockerfile .
 
     - name: Save Docker image
       run: docker save test:latest | gzip > test.tar.gz
