@@ -56,6 +56,7 @@ jobs:
           docker stop test || true
           docker rm test || true
           docker rmi url-shortener_main || true
+          docker-compose build --no-cache
           docker-compose up -d
 
   verify_deploy:
