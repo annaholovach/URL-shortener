@@ -11,10 +11,6 @@ const PORT = process.env.PORT || 5000
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/health', (req, res) => {
-  res.status(200).send('Server is up and running!');
-});
-
 app.use(cors())
 app.use(express.json())
 app.use((req, res, next) => {

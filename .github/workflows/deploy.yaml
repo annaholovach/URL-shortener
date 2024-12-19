@@ -44,9 +44,6 @@ jobs:
         echo "REDIS_HOST=redis" >> .env
         echo "REDIS_PORT=6379" >> .env
 
-    - name: Build Docker image
-      run: docker build --no-cache -t url-shortener_main -f ./Dockerfile .
-
     - name: Send command via SSM
       uses: peterkimzz/aws-ssm-send-command@master
       with:
@@ -60,6 +57,7 @@ jobs:
           docker stop test || true
           docker rm test || true
           docker rmi url-shortener_main || true
+          docker build --no-cache -t url-shortener_main -f ./Dockerfile .
           docker run -d --name test --env-file ~/app/.env -p 5000:5000 test:latest
 
   verify_deploy:
