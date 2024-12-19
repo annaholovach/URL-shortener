@@ -44,6 +44,9 @@ jobs:
         echo "REDIS_HOST=redis" >> .env
         echo "REDIS_PORT=6379" >> .env
 
+    - name: Build Docker image
+      run: docker build --no-cache -t url-shortener_main -f ./Dockerfile .
+
     - name: Copy .env file to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
