@@ -78,9 +78,10 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+        working-directory: /home/ubuntu/URL-shortener
         commands: |
-          cd URL-shortener
           docker-compose build --no-cache
+        
     
     - name: Rebuild container
       uses: peterkimzz/aws-ssm-send-command@master
@@ -89,6 +90,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+        working-directory: /home/ubuntu/URL-shortener
         commands: |
           docker-compose up -d
 
