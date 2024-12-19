@@ -61,15 +61,15 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         command: docker rm test || true
-
-    - name: Rm image
+      
+    - name: Rebuild image
       uses: peterkimzz/aws-ssm-send-command@master
       with:
         aws-region: ${{ secrets.AWS_REGION }}
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        command: docker rmi url-shortener_main || true
+        command: docker-compose build --no-cache
     
     - name: Rebuild container
       uses: peterkimzz/aws-ssm-send-command@master
