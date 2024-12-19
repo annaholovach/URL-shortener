@@ -81,7 +81,7 @@ jobs:
         target: "~/app/.env"
 
     - name: Deploy Docker image on EC2
-      uses: appleboy/ssh-action
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
