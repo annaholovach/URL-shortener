@@ -3,7 +3,7 @@ const router = new Router()
 const urlController = require('../controllers/urlController')
 
 
-app.get('/health', (req, res) => {
+router.get('/health', (req, res) => {
   res.status(200).send('Server is up and running!');
 });
 
