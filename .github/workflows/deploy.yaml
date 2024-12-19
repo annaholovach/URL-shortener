@@ -32,7 +32,10 @@ jobs:
 
     steps:
     - name: Build Docker image
-      run: docker build -t test:latest .
+      run: docker build -t test:latest -f ./Dockerfile .
+
+    - name: Check file permissions
+      run: ls -l Dockerfile
 
     - name: Save Docker image
       run: docker save test:latest | gzip > test.tar.gz
