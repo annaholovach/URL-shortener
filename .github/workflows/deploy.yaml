@@ -44,6 +44,42 @@ jobs:
         echo "REDIS_HOST=redis" >> .env
         echo "REDIS_PORT=6379" >> .env
 
+    - name: Stop container
+      uses: peterkimzz/aws-ssm-send-command@master
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+        command: docker stop test || true
+
+    - name: Rm container
+      uses: peterkimzz/aws-ssm-send-command@master
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+        command: docker rm test || true
+
+    - name: Rm image
+      uses: peterkimzz/aws-ssm-send-command@master
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+        command: docker rmi url-shortener_main || true
+      
+    - name: Rebuild image
+      uses: peterkimzz/aws-ssm-send-command@master
+      with:
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+        command: docker-compose build --no-cache
+    
     - name: Rebuild container
       uses: peterkimzz/aws-ssm-send-command@master
       with:
@@ -51,13 +87,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        document-name: "AWS-RunShellScript"
-        commands: |
-          docker stop test || true
-          docker rm test || true
-          docker rmi url-shortener_main || true
-          docker-compose build --no-cache
-          docker-compose up -d
+        command: docker-compose up -d
 
   verify_deploy:
     name: Verify Deployment
