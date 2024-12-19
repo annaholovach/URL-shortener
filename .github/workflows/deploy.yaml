@@ -51,7 +51,8 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        command: docker stop test || true
+        commands: |
+          docker stop test || true
 
     - name: Rm container
       uses: peterkimzz/aws-ssm-send-command@master
@@ -60,7 +61,8 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        command: docker rm test || true
+        commands: |
+          docker rm test || true
       
     - name: Rebuild image
       uses: peterkimzz/aws-ssm-send-command@master
@@ -69,7 +71,8 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        command: docker-compose build --no-cache
+        commands: |
+          docker-compose build --no-cache
     
     - name: Rebuild container
       uses: peterkimzz/aws-ssm-send-command@master
@@ -78,7 +81,8 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        command: docker-compose up -d
+        commands: |
+          docker-compose up -d
 
   verify_deploy:
     name: Verify Deployment
