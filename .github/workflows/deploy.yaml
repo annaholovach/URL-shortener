@@ -53,12 +53,10 @@ jobs:
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         document-name: "AWS-RunShellScript"
         commands: |
-          aws s3 cp s3://$S3_BUCKET/test.tar.gz ~/test.tar.gz
           docker stop test || true
           docker rm test || true
           docker rmi url-shortener_main || true
-          docker build --no-cache -t url-shortener_main -f ./Dockerfile .
-          docker run -d --name test --env-file ~/app/.env -p 5000:5000 test:latest
+          docker-compose up -d
 
   verify_deploy:
     name: Verify Deployment
