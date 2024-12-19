@@ -40,6 +40,12 @@ jobs:
         name: repository-files
         path: . 
 
+    - name: Upload .env file as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: env-file
+        path: .env
+
     - name: List files in the repository
       run: ls -R
 
