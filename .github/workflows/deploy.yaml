@@ -31,9 +31,12 @@ jobs:
     needs: checkout_code  
 
     steps:
+    - name: List repository files
+      run: ls -R
+
     - name: Check file permissions
       run: ls -l Dockerfile
-      
+
     - name: Build Docker image
       run: docker build -t test:latest -f ./Dockerfile .
 
