@@ -44,7 +44,7 @@ jobs:
         echo "REDIS_HOST=redis" >> .env
         echo "REDIS_PORT=6379" >> .env
 
-    - name: Send command via SSM
+    - name: Rebuild container
       uses: peterkimzz/aws-ssm-send-command@master
       with:
         aws-region: ${{ secrets.AWS_REGION }}
