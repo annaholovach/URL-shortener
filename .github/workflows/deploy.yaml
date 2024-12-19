@@ -80,17 +80,17 @@ jobs:
         source: ".env"
         target: "~/app/.env"
 
-      - name: Send command via SSM
-        uses: aws-actions/aws-ssm-send-command@v1
-        with:
-          instance-id: ${{ secrets.EC2_INSTANCE_ID }}
-          document-name: "AWS-RunShellScript"
-          parameters: |
-            commands:
-              - docker stop test || true
-              - docker rm test || true
-              - docker load < ~/test.tar.gz
-              - docker run -d --name test --env-file ~/app/.env -p 5000:5000 test:latest
+    - name: Send command via SSM
+      uses: aws-actions/aws-ssm-send-command@v1
+      with:
+        instance-id: ${{ secrets.EC2_INSTANCE_ID }}
+        document-name: "AWS-RunShellScript"
+        parameters: |
+          commands:
+            - docker stop test || true
+            - docker rm test || true
+            - docker load < ~/test.tar.gz
+            - docker run -d --name test --env-file ~/app/.env -p 5000:5000 test:latest
 
   verify_deploy:
     name: Verify Deployment
