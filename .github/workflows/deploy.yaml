@@ -15,36 +15,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Check if .env exists
-      run: ls -l .env
-
-    - name: Check file permissions
-      run: ls -l .env
-
-    - name: Check .env
-      run: cat .env
-
-    - name: Replace placeholders in .env file
-      run: |
-        sed -i 's|{{DB_HOST}}|${{ secrets.DB_HOST }}|g' .env
-        sed -i 's|{{DB_USER}}|${{ secrets.DB_USER }}|g' .env
-        sed -i 's|{{DB_PASSWORD}}|${{ secrets.DB_PASSWORD }}|g' .env
-        sed -i 's|{{BASE_URL}}|${{ secrets.BASE_URL }}|g' .env
-
-    - name: Check .env
-      run: cat .env
-
     - name: Upload code as artifact
       uses: actions/upload-artifact@v3
       with:
         name: repository-files
         path: . 
-
-    - name: Upload .env file as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: env-file
-        path: .env
 
     - name: List files in the repository
       run: ls -R
@@ -59,6 +34,18 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: repository-files
+
+    - name: Create .env file
+      run: |
+        echo "PORT=5000" >> .env
+        echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+        echo "DB_PORT=3306" >> .env
+        echo "BASE_URL=${{ secrets.BASE_URL }}"" >> .env
+        echo "REDIS_HOST=redis" >> .env
+        echo "REDIS_PORT=6379" >> .env
 
     - name: List repository files
       run: ls -R
