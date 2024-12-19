@@ -43,8 +43,7 @@ jobs:
         echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
         echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
         echo "DB_PORT=3306" >> .env
-        echo "BASE_URL=${{ secrets.BASE_URL }}"" >> .env
-        echo "PORT=${{ secrets.PORT }}"" >> .env
+        echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
         echo "REDIS_HOST=redis" >> .env
         echo "REDIS_PORT=6379" >> .env
 
@@ -87,7 +86,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
+        command: |
           docker stop test || true
           docker rm test || true
           docker load < ~/test.tar.gz
