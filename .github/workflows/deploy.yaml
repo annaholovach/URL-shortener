@@ -88,11 +88,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-id: ${{ secrets.EC2_INSTANCE_ID }}
         document-name: "AWS-RunShellScript"
-        commands:
-            - docker stop test || true
-            - docker rm test || true
-            - docker load < ~/test.tar.gz
-            - docker run -d --name test --env-file ~/app/.env -p 5000:5000 test:latest
+        commands: |
+          docker stop test || true
+          docker rm test || true
+          docker load < ~/test.tar.gz
+          docker run -d --name test --env-file ~/app/.env -p 5000:5000 test:latest
 
   verify_deploy:
     name: Verify Deployment
