@@ -22,6 +22,9 @@ jobs:
         sed -i 's|{{DB_PASSWORD}}|${{ secrets.DB_PASSWORD }}|g' .env
         sed -i 's|{{BASE_URL}}|${{ secrets.BASE_URL }}|g' .env
 
+    - name: List files in the repository
+      run: ls -R
+
   deploy_docker:
     name: Deploy to Docker on EC2
     runs-on: ubuntu-latest
