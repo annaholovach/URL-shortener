@@ -19,7 +19,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: repository-files
-        path: . 
 
   deploy_docker:
     name: Deploy to Docker on EC2
@@ -31,7 +30,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: repository-files
-        path: .
 
     - name: Copy .env file to EC2 using SSM
       uses: peterkimzz/aws-ssm-send-command@master
