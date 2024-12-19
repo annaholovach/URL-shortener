@@ -31,6 +31,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: repository-files
+        path: .
 
     - name: Copy .env file to EC2 using SSM
       uses: peterkimzz/aws-ssm-send-command@master
@@ -90,6 +91,9 @@ jobs:
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         commands: |
           docker-compose up -d
+
+    - name: Debug Docker containers
+      run: docker ps -a
 
   verify_deploy:
     name: Verify Deployment
