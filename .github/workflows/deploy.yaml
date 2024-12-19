@@ -99,6 +99,9 @@ jobs:
             --env-file ~/app/.env \
             -p 5000:5000 \
             test:latest
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh-agent.sock
+          GIT_SSH_COMMAND: "ssh -v"  # This enables verbose SSH logging
 
   verify_deploy:
     name: Verify Deployment
