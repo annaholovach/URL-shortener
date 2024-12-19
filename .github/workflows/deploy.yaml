@@ -19,6 +19,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: repository-files
+        path: . 
 
   deploy_docker:
     name: Deploy to Docker on EC2
