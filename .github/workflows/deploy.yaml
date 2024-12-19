@@ -44,9 +44,12 @@ jobs:
         echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
         echo "DB_PORT=3306" >> .env
         echo "BASE_URL=${{ secrets.BASE_URL }}"" >> .env
-        echo "PORT=${{ secrets.PORT }}" >> .env
+        echo "PORT=${{ secrets.PORT }}"" >> .env
         echo "REDIS_HOST=redis" >> .env
         echo "REDIS_PORT=6379" >> .env
+
+    - name: List .env file
+      run: cat .env
 
     - name: List repository files
       run: ls -R
