@@ -29,11 +29,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create private key for SSH
-        run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > private-key.pem
-          chmod 600 private-key.pem
-
       - name: Copy files to EC2
         uses: appleboy/scp-action@master
         with:
@@ -42,6 +37,11 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "/home/ubuntu/URL-shortener"
+
+      - name: Create private key for SSH
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > private-key.pem
+          chmod 600 private-key.pem
 
       - name: Create .env file on EC2
         run: |
