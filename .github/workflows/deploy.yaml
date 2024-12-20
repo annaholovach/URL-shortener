@@ -21,8 +21,8 @@ jobs:
         name: repository-files
         path: . 
 
-  deploy_docker:
-    name: Deploy to Docker on EC2
+  deploy_pm2:
+    name: Deploy to PM2 on EC2
     runs-on: ubuntu-latest
     needs: checkout_code  
 
@@ -47,10 +47,10 @@ jobs:
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_PORT=3306" >> .env
           echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
-          echo "REDIS_HOST=redis" >> .env
+          echo "REDIS_HOST=${{ secretes.REDIS_HOST }}" >> .env
           echo "REDIS_PORT=6379" >> .env
 
-    - name: Stop container
+    - name: Stop PM2 process
       uses: peterkimzz/aws-ssm-send-command@master
       with:
         aws-region: ${{ secrets.AWS_REGION }}
@@ -58,19 +58,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         commands: |
-          docker stop test || true
+          pm2 stop all || true
 
-    - name: Rm container
-      uses: peterkimzz/aws-ssm-send-command@master
-      with:
-        aws-region: ${{ secrets.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        commands: |
-          docker rm test || true
-      
-    - name: Rebuild image
+    - name: Pull the latest code and install dependencies
       uses: peterkimzz/aws-ssm-send-command@master
       with:
         aws-region: ${{ secrets.AWS_REGION }}
@@ -79,10 +69,10 @@ jobs:
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         working-directory: /home/ubuntu/URL-shortener
         commands: |
-          docker-compose build --no-cache
-        
-    
-    - name: Rebuild container
+          git pull origin master
+          npm install
+
+    - name: Restart PM2 with the updated application
       uses: peterkimzz/aws-ssm-send-command@master
       with:
         aws-region: ${{ secrets.AWS_REGION }}
@@ -91,15 +81,13 @@ jobs:
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         working-directory: /home/ubuntu/URL-shortener
         commands: |
-          docker-compose up -d
-
-    - name: Debug Docker containers
-      run: docker ps -a
+          pm2 start index.js --name url-shortener
+          pm2 save
 
   verify_deploy:
     name: Verify Deployment
     runs-on: ubuntu-latest
-    needs: deploy_docker 
+    needs: deploy_pm2 
 
     steps:
     - name: Verify Deployment
@@ -116,5 +104,5 @@ jobs:
           else
             echo "Deployment failed"
             exit 1
-          fi
+
 
