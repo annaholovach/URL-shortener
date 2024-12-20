@@ -1,8 +1,35 @@
 const request = require('supertest');
 const app = require('../index');  
 const urlService = require('../service/urlService');
+const redis = require('redis-mock');
+const SequelizeMock = require('sequelize-mock');
 
 jest.mock('../service/urlService');
+
+jest.mock('redis', () => ({
+    createClient: jest.fn(() => ({
+      on: jest.fn(),
+      SET: jest.fn(() => Promise.resolve('OK')), 
+      GET: jest.fn(() => Promise.resolve('some_value')), 
+      quit: jest.fn(() => Promise.resolve()),
+    })),
+  }));
+
+let mockRedisClient;
+
+beforeAll(() => {
+    mockRedisClient = redis.createClient();
+    return mockRedisClient;
+});
+  
+afterAll(() => {
+    return new Promise((resolve, reject) => {
+        mockRedisClient.quit((err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+});
 
 describe('UrlController Tests', () => {
   

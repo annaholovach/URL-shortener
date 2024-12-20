@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "mysql2": "^3.6.0",
     "redis": "^3.1.2",
     "sequelize": "^6.32.1",
+    "server-destroy": "^1.0.1",
     "shortid": "^2.2.16",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
@@ -26,6 +27,8 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.0.1",
+    "redis-mock": "^0.56.3",
+    "sequelize-mock": "^0.10.2",
     "supertest": "^7.0.0"
   }
 }
