@@ -29,6 +29,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create private key for SSH
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > private-key.pem
+          chmod 600 private-key.pem
+
       - name: Copy files to EC2
         uses: appleboy/scp-action@master
         with:
@@ -38,10 +43,21 @@ jobs:
           source: "."
           target: "/home/ubuntu/URL-shortener"
 
+      - name: Create .env file on EC2
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
+          scp -i private-key.pem -o StrictHostKeyChecking=no .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/URL-shortener/.env
+
       - name: Restart application using PM2
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > private-key.pem
-          chmod 600 private-key.pem
           ssh -o StrictHostKeyChecking=no -i private-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/URL-shortener && pm2 restart url-shortener"
 
 
