@@ -40,6 +40,6 @@ jobs:
 
       - name: Restart application using PM2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/URL-shortener && pm2 restart url-shortener" 
+          sudo ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cd /home/ubuntu/URL-shortener && pm2 restart url-shortener" 
 
 
