@@ -15,22 +15,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Upload code as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: repository-files
-        path: . 
-
   deploy_pm2:
     name: Deploy to PM2 on EC2
     runs-on: ubuntu-latest
     needs: checkout_code  
-
-    steps:
-    - name: Download repository files
-      uses: actions/download-artifact@v3
-      with:
-        name: repository-files
 
     - name: Copy .env file to EC2 using SSM
       uses: peterkimzz/aws-ssm-send-command@master
