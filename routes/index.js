@@ -7,10 +7,6 @@ router.get('/health', (req, res) => {
   res.status(200).send('Server is up and running!');
 });
 
-router.get('/check', (req, res) => {
-  res.status(200).send('Server is up and running!');
-});
-
 /**
  * @swagger
  * /url/shorten:
