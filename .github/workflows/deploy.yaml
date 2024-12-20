@@ -40,16 +40,6 @@ jobs:
           echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
           echo "REDIS_PORT=6379" >> .env
 
-    - name: Stop PM2 process
-      uses: peterkimzz/aws-ssm-send-command@master
-      with:
-        aws-region: ${{ secrets.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
-        commands: |
-          pm2 stop all || true
-
     - name: Pull the latest code and install dependencies
       uses: peterkimzz/aws-ssm-send-command@master
       with:
@@ -71,8 +61,7 @@ jobs:
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
         working-directory: /home/ubuntu/URL-shortener
         commands: |
-          pm2 start index.js --name url-shortener
-          pm2 save
+          pm2 restart url-shortener
 
   verify_deploy:
     name: Verify Deployment
